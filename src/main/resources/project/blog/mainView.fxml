@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.blog.Controller">
+    <center>
+        <TableView fx:id="articleTable">
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+            <columns>
+                <TableColumn text="Title">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="title" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Writer">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="writer" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Date Written">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="dateWritten" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Article Type">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="type" />
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+    </center>
+    <right>
+        <VBox alignment="CENTER" spacing="15">
+            <Button onAction="#loadArticles" text="Read article" />
+            <Button text="Add new article" />
+            <Button text="Edit article" />
+            <Button text="Delete article" />
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="10.0" right="10.0" />
+         </padding>
+        </VBox>
+    </right>
+</BorderPane>
