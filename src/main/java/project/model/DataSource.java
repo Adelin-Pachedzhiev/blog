@@ -38,9 +38,8 @@ public class DataSource {
     public static final String COLUMN_ARTICLE_TYPES_DESCRIPTION = "description";
 
 
-
-
-
+    private DataSource() {
+    }
 
     public static final String QUERY_ARTICLES_JOIN = "SELECT "+ TABLE_ARTICLES + "." + COLUMN_ARTICLE_ID + ", " +
             TABLE_USERS + "." +COLUMN_USERS_NAME + ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_WRITER_ID + ", "+
@@ -51,10 +50,11 @@ public class DataSource {
             TABLE_ARTICLE_TYPES + " ON " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_TYPE_ID + " = " + TABLE_ARTICLE_TYPES + "." +
             COLUMN_ARTICLE_TYPES_ID;
 
-
-    //SELECT articles.id, writer.name, article.writer_id, articles.title, articles.content, articles.dateWritten, article_type.name, article.type_id
+    public static final String QUERY_USERS_USERNAME_PASSWORD = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS +
+        "." + COLUMN_USERS_USERNAME + " = ? AND " + TABLE_USERS + "." + COLUMN_USERS_PASSWORD + "= ?";
     public static final String QUERY_ARTICLES =  "SELECT * FROM " + TABLE_ARTICLES;
     private Connection connection;
+    private PreparedStatement queryUsersUsernamePassword;
 
 
     public static DataSource getInstance(){
@@ -64,6 +64,7 @@ public class DataSource {
     public void open(){
         try{
             connection = DriverManager.getConnection(CONNECTION_STRING);
+            queryUsersUsernamePassword = connection.prepareStatement(QUERY_USERS_USERNAME_PASSWORD);
         }catch (SQLException e){
             System.out.println("Problem when opening db connection " + e.getMessage());
         }
@@ -71,6 +72,9 @@ public class DataSource {
 
     public void close(){
         try{
+            if(queryUsersUsernamePassword != null){
+                queryUsersUsernamePassword.close();
+            }
             if(connection != null){
                 connection.close();
             }
@@ -125,6 +129,29 @@ public class DataSource {
             System.out.println(e1.getMessage());
             return null;
         }
+    }
+
+    public User queryUserByUsernamePassword(String username, String password){
+        try{
+            queryUsersUsernamePassword.setString(1, username);
+            queryUsersUsernamePassword.setString(2, password);
+
+            ResultSet resultSet = queryUsersUsernamePassword.executeQuery();
+            if(resultSet.next()){
+                User user = new User();
+                user.setId(resultSet.getInt(1));
+                user.setName(resultSet.getString(2));
+                user.setUsername(resultSet.getString(3));
+                user.setPassword(resultSet.getString(4));
+                return user;
+            }
+            return null;
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
 }

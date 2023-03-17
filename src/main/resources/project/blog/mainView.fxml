@@ -5,7 +5,7 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.blog.Controller">
+<BorderPane fx:id="borderPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.blog.Controller">
     <center>
         <TableView fx:id="articleTable">
             <columnResizePolicy>
@@ -36,11 +36,15 @@
         </TableView>
     </center>
     <right>
-        <VBox alignment="CENTER" spacing="15">
-            <Button onAction="#loadArticles" text="Read article" />
-            <Button text="Add new article" />
-            <Button text="Edit article" />
-            <Button text="Delete article" />
+        <VBox fx:id="buttonsVBox" alignment="CENTER" spacing="15" prefWidth="200">
+            <Button fx:id="loadArticlesButton" onAction="#loadArticles" text="Read article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="newArticleButton" onAction="#handleNewItem" text="Add new article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="editArticleButton" text="Edit article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="deleteArticleButton" text="Delete article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="loginButton" text="Login" onAction="#handleLogin" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="registerButton" text="Register" onAction="#handleRegister" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="logoutButton" text="Logout" prefWidth="${buttonsVBox.width}" onAction="#handleLogout"/>
+
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
