@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.blog.RegisterDialogController">
+    <content>
+        <VBox prefHeight="203.0" prefWidth="600.0">
+            <HBox>
+                <Label minHeight="20.0" minWidth="75.0" text="Name: " />
+                <TextField fx:id="nameField" />
+            <padding>
+               <Insets bottom="5.0" top="5.0" />
+            </padding>
+            </HBox>
+            <HBox>
+                <Label minHeight="20.0" minWidth="75.0" text="Username: " />
+                <TextField fx:id="usernameField" />
+            <padding>
+               <Insets bottom="5.0" top="5.0" />
+            </padding>
+            </HBox>
+            <HBox>
+               <Label minHeight="20.0" minWidth="75.0" text="Password: " />
+               <TextField fx:id="passwordField" />
+            <padding>
+               <Insets bottom="5.0" top="5.0" />
+            </padding>
+            </HBox>
+        </VBox>
+    </content>
+</DialogPane>

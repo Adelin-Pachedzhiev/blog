@@ -1,5 +1,6 @@
 package project.model;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class DataSource {
     public static final int INDEX_ARTICLE_ID = 1;
     public static final int INDEX_ARTICLE_TITLE = 2;
     public static final int INDEX_ARTICLE_CONTENT = 3;
-    public static final int INDEX_ARTICLE_DATE_WRITTEN =4;
+    public static final int INDEX_ARTICLE_DATE_WRITTEN = 4;
     public static final int INDEX_ARTICLE_TYPE_ID = 5;
     public static final int INDEX_ARTICLE_WRITER_ID = 6;
 
@@ -41,8 +42,8 @@ public class DataSource {
     private DataSource() {
     }
 
-    public static final String QUERY_ARTICLES_JOIN = "SELECT "+ TABLE_ARTICLES + "." + COLUMN_ARTICLE_ID + ", " +
-            TABLE_USERS + "." +COLUMN_USERS_NAME + ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_WRITER_ID + ", "+
+    public static final String QUERY_ARTICLES_JOIN = "SELECT " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_ID + ", " +
+            TABLE_USERS + "." + COLUMN_USERS_NAME + ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_WRITER_ID + ", " +
             TABLE_ARTICLES + "." + COLUMN_ARTICLE_TITLE + ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_CONTENT + ", " +
             TABLE_ARTICLES + "." + COLUMN_ARTICLE_DATE_WRITTEN + ", " + TABLE_ARTICLE_TYPES + "." + COLUMN_ARTICLE_TYPES_NAME +
             ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_TYPE_ID + " FROM " + TABLE_ARTICLES + " INNER JOIN " + TABLE_USERS + " ON " +
@@ -51,44 +52,59 @@ public class DataSource {
             COLUMN_ARTICLE_TYPES_ID;
 
     public static final String QUERY_USERS_USERNAME_PASSWORD = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS +
-        "." + COLUMN_USERS_USERNAME + " = ? AND " + TABLE_USERS + "." + COLUMN_USERS_PASSWORD + "= ?";
-    public static final String QUERY_ARTICLES =  "SELECT * FROM " + TABLE_ARTICLES;
+            "." + COLUMN_USERS_USERNAME + " = ? AND " + TABLE_USERS + "." + COLUMN_USERS_PASSWORD + "= ?";
+
+    public static final String QUERY_USERS_USERNAME = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS + "." +
+            COLUMN_USERS_USERNAME + "= ?";
+    public static final String QUERY_ARTICLES = "SELECT * FROM " + TABLE_ARTICLES;
+
+    public static final String QUERY_INSERT_USER = "INSERT INTO " + TABLE_USERS + " VALUES (NULL, ?, ?, ?)";
     private Connection connection;
     private PreparedStatement queryUsersUsernamePassword;
+    private PreparedStatement queryUsersUsername;
+    private PreparedStatement queryInsertUser;
 
 
-    public static DataSource getInstance(){
+    public static DataSource getInstance() {
         return instance;
     }
 
-    public void open(){
-        try{
+    public void open() {
+        try {
             connection = DriverManager.getConnection(CONNECTION_STRING);
             queryUsersUsernamePassword = connection.prepareStatement(QUERY_USERS_USERNAME_PASSWORD);
-        }catch (SQLException e){
+            queryUsersUsername = connection.prepareStatement(QUERY_USERS_USERNAME);
+            queryInsertUser = connection.prepareStatement(QUERY_INSERT_USER);
+        } catch (SQLException e) {
             System.out.println("Problem when opening db connection " + e.getMessage());
         }
     }
 
-    public void close(){
-        try{
-            if(queryUsersUsernamePassword != null){
+    public void close() {
+        try {
+            if (queryUsersUsernamePassword != null) {
                 queryUsersUsernamePassword.close();
             }
-            if(connection != null){
+            if (queryUsersUsername != null) {
+                queryUsersUsername.close();
+            }
+            if(queryInsertUser != null){
+                queryInsertUser.close();
+            }
+            if (connection != null) {
                 connection.close();
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Problem when closing db" + e.getMessage());
         }
 
     }
 
-    public List<Article> queryArticles(){
-        try(Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(QUERY_ARTICLES)){
+    public List<Article> queryArticles() {
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(QUERY_ARTICLES)) {
             List<Article> articles = new ArrayList<>();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Article article = new Article();
                 article.setId(resultSet.getInt(INDEX_ARTICLE_ID));
                 article.setTitle(resultSet.getString(INDEX_ARTICLE_TITLE));
@@ -99,17 +115,17 @@ public class DataSource {
                 articles.add(article);
             }
             return articles;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public List<ArticleJoin> queryArticlesJoin(){
-        try(Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(QUERY_ARTICLES_JOIN);){
+    public List<ArticleJoin> queryArticlesJoin() {
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(QUERY_ARTICLES_JOIN);) {
             List<ArticleJoin> articles = new ArrayList<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 ArticleJoin article = new ArticleJoin();
                 article.setId(resultSet.getInt(1));
                 article.setWriter(resultSet.getString(2));
@@ -122,22 +138,22 @@ public class DataSource {
                 articles.add(article);
             }
             return articles;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Problem with database" + e.getMessage());
             return null;
-        }catch(Exception e1){
+        } catch (Exception e1) {
             System.out.println(e1.getMessage());
             return null;
         }
     }
 
-    public User queryUserByUsernamePassword(String username, String password){
-        try{
+    public User queryUserByUsernamePassword(String username, String password) {
+        try {
             queryUsersUsernamePassword.setString(1, username);
             queryUsersUsernamePassword.setString(2, password);
 
             ResultSet resultSet = queryUsersUsernamePassword.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getInt(1));
                 user.setName(resultSet.getString(2));
@@ -147,11 +163,47 @@ public class DataSource {
             }
             return null;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+    }
 
+    public User queryUsersByUsername(String username) {
+        try {
+            queryUsersUsername.setString(1, username);
+            ResultSet resultSet = queryUsersUsername.executeQuery();
+            if (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt(1));
+                user.setName(resultSet.getString(2));
+                user.setUsername(resultSet.getString(3));
+                user.setPassword(resultSet.getString(4));
+                return user;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }catch (Exception e1){
+            e1.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean queryInsertUser(String name, String username, String password){
+        try {
+            queryInsertUser.setString(1, name);
+            queryInsertUser.setString(2, username);
+            queryInsertUser.setString(3, password);
+
+            queryInsertUser.execute();
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

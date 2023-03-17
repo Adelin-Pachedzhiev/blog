@@ -37,7 +37,7 @@
     </center>
     <right>
         <VBox fx:id="buttonsVBox" alignment="CENTER" spacing="15" prefWidth="200">
-            <Button fx:id="loadArticlesButton" onAction="#loadArticles" text="Read article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="loadArticleButton" onAction="#showArticle" text="Read article" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="newArticleButton" onAction="#handleNewItem" text="Add new article" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="editArticleButton" text="Edit article" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="deleteArticleButton" text="Delete article" prefWidth="${buttonsVBox.width}"/>

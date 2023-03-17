@@ -37,18 +37,16 @@ public class Controller {
     private VBox buttonsVBox;
 
 
-
-
-    public void initialize(){
-        initButtonsLoggedOut();
+    public void initialize() {
+        buttonsOnLoggedOut();
 
     }
 
-    private void initButtonsLoggedOut(){
-        if(!buttonsVBox.getChildren().contains(loginButton)){
+    private void buttonsOnLoggedOut() {
+        if (!buttonsVBox.getChildren().contains(loginButton)) {
             buttonsVBox.getChildren().add(loginButton);
         }
-        if(!buttonsVBox.getChildren().contains(registerButton)){
+        if (!buttonsVBox.getChildren().contains(registerButton)) {
             buttonsVBox.getChildren().add(registerButton);
         }
         buttonsVBox.getChildren().remove(logoutButton);
@@ -56,7 +54,8 @@ public class Controller {
         buttonsVBox.getChildren().remove(editArticleButton);
         buttonsVBox.getChildren().remove(deleteArticleButton);
     }
-    private void initButtonsLoggedIn(){
+
+    private void buttonsOnLoggedIn() {
         buttonsVBox.getChildren().remove(loginButton);
         buttonsVBox.getChildren().remove(registerButton);
         buttonsVBox.getChildren().add(newArticleButton);
@@ -66,15 +65,16 @@ public class Controller {
     }
 
     @FXML
-    public void loadArticles(){
+    public void loadArticles() {
 
         Task<ObservableList<ArticleJoin>> loadTask = new LoadArticlesJoin();
         articleTable.itemsProperty().bind(loadTask.valueProperty());
         Thread thread = new Thread(loadTask);
         new Thread(loadTask).start();
     }
+
     @FXML
-    public void handleNewItem(){
+    public void handleNewItem() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(borderPane.getScene().getWindow());
         dialog.setTitle("Add new Article");
@@ -82,23 +82,23 @@ public class Controller {
         FXMLLoader dialogLoader = new FXMLLoader();
         dialogLoader.setLocation(getClass().getResource("addItemDialog.fxml"));
 
-        try{
+        try {
             dialog.getDialogPane().setContent(dialogLoader.load());
-        }catch(IOException e ){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
         Optional<ButtonType> result = dialog.showAndWait();
-        if(result.isPresent() && result.get().equals(ButtonType.OK)){
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             AddItemDialogController dialogController = dialogLoader.getController();
             Article newArticle = dialogController.addArticle();
         }
     }
 
     @FXML
-    public void handleLogin(){
+    public void handleLogin() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(borderPane.getScene().getWindow());
         dialog.setTitle("Login");
@@ -108,20 +108,20 @@ public class Controller {
 
         try {
             dialog.getDialogPane().setContent(dialogLoader.load());
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         Optional<ButtonType> result = dialog.showAndWait();
 
-        if(result.isPresent() && result.get().equals(ButtonType.OK)){
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             LoginDialogController dialogController = dialogLoader.getController();
             boolean isLoginSuccessful = dialogController.login();
-            if(isLoginSuccessful){
-                initButtonsLoggedIn();
-            }else{
-                Alert alert = new Alert(Alert.AlertType.ERROR,"", ButtonType.OK);
+            if (isLoginSuccessful) {
+                buttonsOnLoggedIn();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
                 alert.setTitle("Login failed");
                 alert.setHeaderText("Wrong username or password");
                 alert.showAndWait();
@@ -129,15 +129,70 @@ public class Controller {
 
         }
     }
+
     @FXML
-    public void handleLogout(){
+    public void handleLogout() {
         LoggedUser.getInstance().logout();
-        initButtonsLoggedOut();
+        buttonsOnLoggedOut();
 
     }
 
-    public void handleRegister(){
+    @FXML
+    public void handleRegister() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(borderPane.getScene().getWindow());
+        dialog.setTitle("Register");
+        dialog.setHeaderText("Register");
+        FXMLLoader dialogLoader = new FXMLLoader();
+        dialogLoader.setLocation(getClass().getResource("registerDialog.fxml"));
 
+        try {
+            dialog.getDialogPane().setContent(dialogLoader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            RegisterDialogController dialogController = dialogLoader.getController();
+            boolean isRegisterSuccessful = dialogController.registerUser();
+            if (isRegisterSuccessful) {
+                buttonsOnLoggedIn();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+                alert.setTitle("Register failed");
+                alert.setHeaderText("Username is already taken ot there is an internal problem. \nPlease try again.");
+                alert.showAndWait();
+            }
+
+        }
+    }
+
+    @FXML
+    public void showArticle(){
+        ArticleJoin article = articleTable.getSelectionModel().getSelectedItem();
+        if(article == null){
+            return;
+        }
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(borderPane.getScene().getWindow());
+        dialog.setTitle(article.getTitle());
+        FXMLLoader dialogLoader = new FXMLLoader();
+        dialogLoader.setLocation(getClass().getResource("readArticleDialog.fxml"));
+
+        try {
+            dialog.getDialogPane().setContent(dialogLoader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+        ReadArticleDialogController dialogController = dialogLoader.getController();
+        dialogController.loadArticle(article);
+        dialog.showAndWait();
     }
 
 }

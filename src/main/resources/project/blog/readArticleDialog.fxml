@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<DialogPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.blog.ReadArticleDialogController">
+    <content>
+        <VBox>
+            <Label fx:id="titleLabel">
+                <font>
+                    <Font name="System Italic" size="20.0" />
+                </font>
+            <VBox.margin>
+               <Insets top="5.0" />
+            </VBox.margin>
+            </Label>
+            <Label fx:id="dateWrittenLabel">
+            <VBox.margin>
+               <Insets bottom="5.0" />
+            </VBox.margin></Label>
+            <Label fx:id="typeLabel">
+            <VBox.margin>
+               <Insets bottom="15.0" top="5.0" />
+            </VBox.margin></Label>
+            <Text fx:id="articleText" />
+        </VBox>
+    </content>
+</DialogPane>
