@@ -10,5 +10,15 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="project.blog.AddItemDialogController"
             prefHeight="400.0" prefWidth="600.0">
+    <content>
+        <VBox>
 
+                <Label text="Title: "/>
+                <TextField fx:id="titleField" promptText="Write your title here..."/>
+                <Label text="Article type: "/>
+                <ComboBox editable="false" fx:id="typeComboBox" promptText="Select the type of your article."/>
+                <Label text="Article"/>
+                <TextArea fx:id="textArea" promptText="Write you article here..."/>
+        </VBox>
+    </content>
 </DialogPane>

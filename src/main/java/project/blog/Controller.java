@@ -67,7 +67,7 @@ public class Controller {
     @FXML
     public void loadArticles() {
 
-        Task<ObservableList<ArticleJoin>> loadTask = new LoadArticlesJoin();
+        Task<ObservableList<ArticleJoin>> loadTask = new LoadArticlesJoinTask();
         articleTable.itemsProperty().bind(loadTask.valueProperty());
         Thread thread = new Thread(loadTask);
         new Thread(loadTask).start();
