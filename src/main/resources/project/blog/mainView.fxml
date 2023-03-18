@@ -24,7 +24,7 @@
                 </TableColumn>
                 <TableColumn text="Date Written">
                     <cellValueFactory>
-                        <PropertyValueFactory property="dateWritten" />
+                        <PropertyValueFactory property="date_written" />
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="Article Type">
@@ -38,12 +38,12 @@
     <right>
         <VBox fx:id="buttonsVBox" alignment="CENTER" spacing="15" prefWidth="200">
             <Button fx:id="loadArticleButton" onAction="#showArticle" text="Read article" prefWidth="${buttonsVBox.width}"/>
-            <Button fx:id="newArticleButton" onAction="#handleNewItem" text="Add new article" prefWidth="${buttonsVBox.width}"/>
-            <Button fx:id="editArticleButton" text="Edit article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="newArticleButton" onAction="#addNewItem" text="Add new article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="editArticleButton" text="Edit article" prefWidth="${buttonsVBox.width}" onAction="#editArticle"/>
             <Button fx:id="deleteArticleButton" text="Delete article" prefWidth="${buttonsVBox.width}"/>
-            <Button fx:id="loginButton" text="Login" onAction="#handleLogin" prefWidth="${buttonsVBox.width}"/>
-            <Button fx:id="registerButton" text="Register" onAction="#handleRegister" prefWidth="${buttonsVBox.width}"/>
-            <Button fx:id="logoutButton" text="Logout" prefWidth="${buttonsVBox.width}" onAction="#handleLogout"/>
+            <Button fx:id="loginButton" text="Login" onAction="#login" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="registerButton" text="Register" onAction="#register" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="logoutButton" text="Logout" prefWidth="${buttonsVBox.width}" onAction="#logout"/>
 
          <BorderPane.margin>
             <Insets />

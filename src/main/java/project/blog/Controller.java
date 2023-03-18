@@ -9,8 +9,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import project.model.Article;
 import project.model.ArticleJoin;
+import project.model.DataSource;
 
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.Optional;
 
 public class Controller {
@@ -69,36 +71,42 @@ public class Controller {
 
         Task<ObservableList<ArticleJoin>> loadTask = new LoadArticlesJoinTask();
         articleTable.itemsProperty().bind(loadTask.valueProperty());
-        Thread thread = new Thread(loadTask);
         new Thread(loadTask).start();
     }
 
     @FXML
-    public void handleNewItem() {
+    public void addNewItem() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(borderPane.getScene().getWindow());
         dialog.setTitle("Add new Article");
         dialog.setHeaderText("Write your article here: ");
         FXMLLoader dialogLoader = new FXMLLoader();
-        dialogLoader.setLocation(getClass().getResource("addItemDialog.fxml"));
+        dialogLoader.setLocation(getClass().getResource("addEditArticle.fxml"));
 
         try {
             dialog.getDialogPane().setContent(dialogLoader.load());
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
+        AddEditItemDialogController dialogController = dialogLoader.getController();
+        dialogController.loadAddForm();
+
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            AddItemDialogController dialogController = dialogLoader.getController();
-            Article newArticle = dialogController.addArticle();
+            Article article = dialogController.createArticle();
+            DataSource.getInstance().queryInsertArticle(article);
+            loadArticles();
         }
     }
 
     @FXML
-    public void handleLogin() {
+    public void login() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(borderPane.getScene().getWindow());
         dialog.setTitle("Login");
@@ -110,6 +118,9 @@ public class Controller {
             dialog.getDialogPane().setContent(dialogLoader.load());
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
@@ -131,14 +142,14 @@ public class Controller {
     }
 
     @FXML
-    public void handleLogout() {
+    public void logout() {
         LoggedUser.getInstance().logout();
         buttonsOnLoggedOut();
 
     }
 
     @FXML
-    public void handleRegister() {
+    public void register() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(borderPane.getScene().getWindow());
         dialog.setTitle("Register");
@@ -150,6 +161,9 @@ public class Controller {
             dialog.getDialogPane().setContent(dialogLoader.load());
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
@@ -187,12 +201,50 @@ public class Controller {
             dialog.getDialogPane().setContent(dialogLoader.load());
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
 
         ReadArticleDialogController dialogController = dialogLoader.getController();
         dialogController.loadArticle(article);
         dialog.showAndWait();
+    }
+
+    @FXML
+    public void editArticle(){
+        if(articleTable.getSelectionModel().getSelectedItem() == null){
+            return;
+        }
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(borderPane.getScene().getWindow());
+        dialog.setTitle("Edit Article");
+        dialog.setHeaderText("Edit your article :");
+        FXMLLoader dialogLoader = new FXMLLoader();
+        dialogLoader.setLocation(getClass().getResource("addEditArticle.fxml"));
+
+        try {
+            dialog.getDialogPane().setContent(dialogLoader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
+        }
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        AddEditItemDialogController dialogController = dialogLoader.getController();
+        Article selectedArticle = articleTable.getSelectionModel().getSelectedItem();
+        dialogController.loadEditForm(selectedArticle);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            Article article = dialogController.createArticle();
+            DataSource.getInstance().queryInsertArticle(article);
+            loadArticles();
+        }
     }
 
 }

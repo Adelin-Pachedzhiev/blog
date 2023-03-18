@@ -1,6 +1,5 @@
 package project.model;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +58,14 @@ public class DataSource {
     public static final String QUERY_ARTICLES = "SELECT * FROM " + TABLE_ARTICLES;
 
     public static final String QUERY_INSERT_USER = "INSERT INTO " + TABLE_USERS + " VALUES (NULL, ?, ?, ?)";
+    public static final String QUERY_ARtiCLE_TYPES = "SELECT * FROM " + TABLE_ARTICLE_TYPES;
+    public static final String QUERY_INSERT_ARTICLE = "INSERT INTO " + TABLE_ARTICLES + " VALUES(null, ?, ?, ?, ?, ?)";
     private Connection connection;
     private PreparedStatement queryUsersUsernamePassword;
     private PreparedStatement queryUsersUsername;
     private PreparedStatement queryInsertUser;
+    private PreparedStatement queryArticleTypes;
+    private PreparedStatement queryInsertArticle;
 
 
     public static DataSource getInstance() {
@@ -75,8 +78,13 @@ public class DataSource {
             queryUsersUsernamePassword = connection.prepareStatement(QUERY_USERS_USERNAME_PASSWORD);
             queryUsersUsername = connection.prepareStatement(QUERY_USERS_USERNAME);
             queryInsertUser = connection.prepareStatement(QUERY_INSERT_USER);
+            queryArticleTypes = connection.prepareStatement(QUERY_ARtiCLE_TYPES);
+            queryInsertArticle = connection.prepareStatement(QUERY_INSERT_ARTICLE);
         } catch (SQLException e) {
             System.out.println("Problem when opening db connection " + e.getMessage());
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
         }
     }
 
@@ -91,11 +99,20 @@ public class DataSource {
             if(queryInsertUser != null){
                 queryInsertUser.close();
             }
+            if(queryArticleTypes != null){
+                queryArticleTypes.close();
+            }
+            if(queryInsertArticle != null){
+                queryInsertArticle.close();
+            }
             if (connection != null) {
                 connection.close();
             }
         } catch (SQLException e) {
             System.out.println("Problem when closing db" + e.getMessage());
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
         }
 
     }
@@ -118,6 +135,10 @@ public class DataSource {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
+            return null;
         }
     }
 
@@ -132,7 +153,7 @@ public class DataSource {
                 article.setWriter_id(resultSet.getInt(3));
                 article.setTitle(resultSet.getString(4));
                 article.setContent(resultSet.getString(5));
-                article.setDateWritten(resultSet.getString(6));
+                article.setDate_written(resultSet.getString(6));
                 article.setType(resultSet.getString(7));
                 article.setType_id(resultSet.getInt(8));
                 articles.add(article);
@@ -141,8 +162,9 @@ public class DataSource {
         } catch (SQLException e) {
             System.out.println("Problem with database" + e.getMessage());
             return null;
-        } catch (Exception e1) {
-            System.out.println(e1.getMessage());
+        } catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
             return null;
         }
     }
@@ -166,6 +188,10 @@ public class DataSource {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
+            return null;
         }
     }
 
@@ -187,6 +213,7 @@ public class DataSource {
             e.printStackTrace();
             return null;
         }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
             e1.printStackTrace();
             return null;
         }
@@ -202,6 +229,51 @@ public class DataSource {
             return true;
         }catch(SQLException e){
             e.printStackTrace();
+            return false;
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<ArticleType> queryArticleTypes(){
+        List<ArticleType> list = new ArrayList<>();
+        try{
+            ResultSet resultSet = queryArticleTypes.executeQuery();
+            while(resultSet.next()){
+                ArticleType articleType = new ArticleType();
+                articleType.setId(resultSet.getInt(1));
+                articleType.setName(resultSet.getString(2));
+                articleType.setDescription(resultSet.getString(3));
+                list.add(articleType);
+            }
+            return list;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean queryInsertArticle(Article article){
+        try{
+            queryInsertArticle.setString(1, article.getTitle());
+            queryInsertArticle.setString(2, article.getContent());
+            queryInsertArticle.setString(3, article.getDate_written());
+            queryInsertArticle.setInt(4, article.getType_id());
+            queryInsertArticle.setInt(5, article.getWriter_id());
+            queryInsertArticle.execute();
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
             return false;
         }
     }

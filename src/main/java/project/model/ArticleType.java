@@ -13,6 +13,12 @@ public class ArticleType {
         name = new SimpleStringProperty();
         description = new SimpleStringProperty();
     }
+
+    @Override
+    public String toString() {
+        return name.get();
+    }
+
     public int getId() {
         return id.get();
     }
