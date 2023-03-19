@@ -40,7 +40,7 @@
             <Button fx:id="loadArticleButton" onAction="#showArticle" text="Read article" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="newArticleButton" onAction="#addNewItem" text="Add new article" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="editArticleButton" text="Edit article" prefWidth="${buttonsVBox.width}" onAction="#editArticle"/>
-            <Button fx:id="deleteArticleButton" text="Delete article" prefWidth="${buttonsVBox.width}"/>
+            <Button fx:id="deleteArticleButton" text="Delete article" prefWidth="${buttonsVBox.width}" onAction="#deleteArticle"/>
             <Button fx:id="loginButton" text="Login" onAction="#login" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="registerButton" text="Register" onAction="#register" prefWidth="${buttonsVBox.width}"/>
             <Button fx:id="logoutButton" text="Logout" prefWidth="${buttonsVBox.width}" onAction="#logout"/>

@@ -7,41 +7,41 @@ import java.util.List;
 public class DataSource {
 
     private static DataSource instance = new DataSource();
-    public static final String DATABASE_NAME = "blog.db";
-    public static final String CONNECTION_STRING = "jdbc:sqlite:/users/adelinpachedzhiev/Documents/Udemy/Java/Blog/" + DATABASE_NAME;
+    private static final String DATABASE_NAME = "blog.db";
+    private static final String CONNECTION_STRING = "jdbc:sqlite:/users/adelinpachedzhiev/Documents/Udemy/Java/Blog/" + DATABASE_NAME;
 
-    public static final String TABLE_ARTICLES = "articles";
-    public static final String TABLE_USERS = "users";
-    public static final String TABLE_ARTICLE_TYPES = "article_types";
+    private static final String TABLE_ARTICLES = "articles";
+    private static final String TABLE_USERS = "users";
+    private static final String TABLE_ARTICLE_TYPES = "article_types";
 
-    public static final int INDEX_ARTICLE_ID = 1;
-    public static final int INDEX_ARTICLE_TITLE = 2;
-    public static final int INDEX_ARTICLE_CONTENT = 3;
-    public static final int INDEX_ARTICLE_DATE_WRITTEN = 4;
-    public static final int INDEX_ARTICLE_TYPE_ID = 5;
-    public static final int INDEX_ARTICLE_WRITER_ID = 6;
+    private static final int INDEX_ARTICLE_ID = 1;
+    private static final int INDEX_ARTICLE_TITLE = 2;
+    private static final int INDEX_ARTICLE_CONTENT = 3;
+    private static final int INDEX_ARTICLE_DATE_WRITTEN = 4;
+    private static final int INDEX_ARTICLE_TYPE_ID = 5;
+    private static final int INDEX_ARTICLE_WRITER_ID = 6;
 
-    public static final String COLUMN_ARTICLE_ID = "id";
-    public static final String COLUMN_ARTICLE_TITLE = "title";
-    public static final String COLUMN_ARTICLE_CONTENT = "content";
-    public static final String COLUMN_ARTICLE_DATE_WRITTEN = "date_written";
-    public static final String COLUMN_ARTICLE_TYPE_ID = "type_id";
-    public static final String COLUMN_ARTICLE_WRITER_ID = "writer_id";
+    private static final String COLUMN_ARTICLE_ID = "id";
+    private static final String COLUMN_ARTICLE_TITLE = "title";
+    private static final String COLUMN_ARTICLE_CONTENT = "content";
+    private static final String COLUMN_ARTICLE_DATE_WRITTEN = "date_written";
+    private static final String COLUMN_ARTICLE_TYPE_ID = "type_id";
+    private static final String COLUMN_ARTICLE_WRITER_ID = "writer_id";
 
-    public static final String COLUMN_USERS_ID = "id";
-    public static final String COLUMN_USERS_NAME = "name";
-    public static final String COLUMN_USERS_USERNAME = "username";
-    public static final String COLUMN_USERS_PASSWORD = "password";
+    private static final String COLUMN_USERS_ID = "id";
+    private static final String COLUMN_USERS_NAME = "name";
+    private static final String COLUMN_USERS_USERNAME = "username";
+    private static final String COLUMN_USERS_PASSWORD = "password";
 
-    public static final String COLUMN_ARTICLE_TYPES_ID = "id";
-    public static final String COLUMN_ARTICLE_TYPES_NAME = "name";
-    public static final String COLUMN_ARTICLE_TYPES_DESCRIPTION = "description";
+    private static final String COLUMN_ARTICLE_TYPES_ID = "id";
+    private static final String COLUMN_ARTICLE_TYPES_NAME = "name";
+    private static final String COLUMN_ARTICLE_TYPES_DESCRIPTION = "description";
 
 
     private DataSource() {
     }
 
-    public static final String QUERY_ARTICLES_JOIN = "SELECT " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_ID + ", " +
+    private static final String QUERY_ARTICLES_JOIN = "SELECT " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_ID + ", " +
             TABLE_USERS + "." + COLUMN_USERS_NAME + ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_WRITER_ID + ", " +
             TABLE_ARTICLES + "." + COLUMN_ARTICLE_TITLE + ", " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_CONTENT + ", " +
             TABLE_ARTICLES + "." + COLUMN_ARTICLE_DATE_WRITTEN + ", " + TABLE_ARTICLE_TYPES + "." + COLUMN_ARTICLE_TYPES_NAME +
@@ -50,22 +50,29 @@ public class DataSource {
             TABLE_ARTICLE_TYPES + " ON " + TABLE_ARTICLES + "." + COLUMN_ARTICLE_TYPE_ID + " = " + TABLE_ARTICLE_TYPES + "." +
             COLUMN_ARTICLE_TYPES_ID;
 
-    public static final String QUERY_USERS_USERNAME_PASSWORD = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS +
+    private static final String QUERY_USERS_USERNAME_PASSWORD = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS +
             "." + COLUMN_USERS_USERNAME + " = ? AND " + TABLE_USERS + "." + COLUMN_USERS_PASSWORD + "= ?";
 
-    public static final String QUERY_USERS_USERNAME = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS + "." +
+    private static final String QUERY_USERS_USERNAME = "SELECT * FROM " + TABLE_USERS + " WHERE " + TABLE_USERS + "." +
             COLUMN_USERS_USERNAME + "= ?";
-    public static final String QUERY_ARTICLES = "SELECT * FROM " + TABLE_ARTICLES;
+    private static final String QUERY_ARTICLES = "SELECT * FROM " + TABLE_ARTICLES;
 
-    public static final String QUERY_INSERT_USER = "INSERT INTO " + TABLE_USERS + " VALUES (NULL, ?, ?, ?)";
-    public static final String QUERY_ARtiCLE_TYPES = "SELECT * FROM " + TABLE_ARTICLE_TYPES;
-    public static final String QUERY_INSERT_ARTICLE = "INSERT INTO " + TABLE_ARTICLES + " VALUES(null, ?, ?, ?, ?, ?)";
+    private static final String QUERY_INSERT_USER = "INSERT INTO " + TABLE_USERS + " VALUES (NULL, ?, ?, ?)";
+    private static final String QUERY_ARtiCLE_TYPES = "SELECT * FROM " + TABLE_ARTICLE_TYPES;
+    private static final String QUERY_INSERT_ARTICLE = "INSERT INTO " + TABLE_ARTICLES + " VALUES(null, ?, ?, ?, ?, ?)";
+    private static final String QUERY_EDIT_ARTICLE = "UPDATE "+ TABLE_ARTICLES+ " SET " + COLUMN_ARTICLE_TITLE + "= ? , " +
+            COLUMN_ARTICLE_CONTENT + " = ? , " + COLUMN_ARTICLE_DATE_WRITTEN + "= ?, " + COLUMN_ARTICLE_TYPE_ID + "= ?, " +
+            COLUMN_ARTICLE_WRITER_ID + "= ? WHERE " + COLUMN_ARTICLE_ID + "= ?";
+    private static final String QUERY_DELETE_ARTICLE = "DELETE FROM " + TABLE_ARTICLES + " WHERE " + COLUMN_ARTICLE_ID +
+            " = ?";
     private Connection connection;
     private PreparedStatement queryUsersUsernamePassword;
     private PreparedStatement queryUsersUsername;
     private PreparedStatement queryInsertUser;
     private PreparedStatement queryArticleTypes;
     private PreparedStatement queryInsertArticle;
+    private PreparedStatement queryEditArticle;
+    private PreparedStatement queryDeleteArticle;
 
 
     public static DataSource getInstance() {
@@ -80,6 +87,8 @@ public class DataSource {
             queryInsertUser = connection.prepareStatement(QUERY_INSERT_USER);
             queryArticleTypes = connection.prepareStatement(QUERY_ARtiCLE_TYPES);
             queryInsertArticle = connection.prepareStatement(QUERY_INSERT_ARTICLE);
+            queryEditArticle = connection.prepareStatement(QUERY_EDIT_ARTICLE);
+            queryDeleteArticle = connection.prepareStatement(QUERY_DELETE_ARTICLE);
         } catch (SQLException e) {
             System.out.println("Problem when opening db connection " + e.getMessage());
         }catch (Exception e1){
@@ -104,6 +113,12 @@ public class DataSource {
             }
             if(queryInsertArticle != null){
                 queryInsertArticle.close();
+            }
+            if(queryEditArticle != null){
+                queryEditArticle.close();
+            }
+            if(queryDeleteArticle != null){
+                queryDeleteArticle.close();
             }
             if (connection != null) {
                 connection.close();
@@ -278,4 +293,37 @@ public class DataSource {
         }
     }
 
+    public boolean queryEditArticle(Article article){
+        try{
+            queryEditArticle.setString(1, article.getTitle());
+            queryEditArticle.setString(2, article.getContent());
+            queryEditArticle.setString(3, article.getDate_written());
+            queryEditArticle.setInt(4, article.getType_id());
+            queryEditArticle.setInt(5, article.getWriter_id());
+            queryEditArticle.setInt(6, article.getId());
+            int result =  queryEditArticle.executeUpdate();
+            return result == 1;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }catch (Exception e1){
+            System.out.println("Exception " + e1.getMessage());
+            e1.printStackTrace();
+            return false;
+        }
+    }
+    public boolean queryDeleteArticle(Article article){
+        try{
+            queryDeleteArticle.setInt(1, article.getId());
+            int result = queryDeleteArticle.executeUpdate();
+            return result == 1;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }catch (Exception e1){
+            System.out.println("Exception: " + e1.getMessage());
+            e1.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -214,7 +214,15 @@ public class Controller {
 
     @FXML
     public void editArticle(){
-        if(articleTable.getSelectionModel().getSelectedItem() == null){
+        Article selectedArticle = articleTable.getSelectionModel().getSelectedItem();
+        if(selectedArticle == null){
+            return;
+        }
+        if(selectedArticle.getWriter_id() != LoggedUser.getInstance().getId()){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+            alert.setTitle("Edit failed");
+            alert.setHeaderText("You need to be the owner of the article in order to edit it.");
+            alert.showAndWait();
             return;
         }
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -236,15 +244,37 @@ public class Controller {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
         AddEditItemDialogController dialogController = dialogLoader.getController();
-        Article selectedArticle = articleTable.getSelectionModel().getSelectedItem();
+
         dialogController.loadEditForm(selectedArticle);
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            Article article = dialogController.createArticle();
-            DataSource.getInstance().queryInsertArticle(article);
+            Article editedArticle = dialogController.editArticle(selectedArticle);
+            DataSource.getInstance().queryEditArticle(editedArticle);
             loadArticles();
         }
+    }
+    @FXML
+    public void deleteArticle(){
+        Article selectedArticle = articleTable.getSelectionModel().getSelectedItem();
+        if(selectedArticle == null){
+            return;
+        }
+        if(selectedArticle.getWriter_id() != LoggedUser.getInstance().getId()){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+            alert.setTitle("Delete failed");
+            alert.setHeaderText("You need to be the owner of the article in order to delete it.");
+            alert.showAndWait();
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.OK, ButtonType.CANCEL);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText("Are you sure you want to delete article '" + selectedArticle.getTitle() + "' from " + selectedArticle.getDate_written());
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isPresent() && result.get()==ButtonType.OK){
+            DataSource.getInstance().queryDeleteArticle(selectedArticle);
+        }
+        loadArticles();
     }
 
 }
